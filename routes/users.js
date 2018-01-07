@@ -2,13 +2,15 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 console.log('READING FILE: ' + process.argv[2]);
-var obj = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+var json = fs.readFileSync(process.argv[2], 'utf8');
 var randomInt = require('random-int');
 var jwt = require('jsonwebtoken');
+var util = require('util');
 
 var mapping = new Map();
+var maxSize = 10000;
 
-for (let i = 0; i < 10000; ++i) mapping.set(i, obj);
+for (let i = 0; i < maxSize; ++i) mapping.set(i, JSON.parse(util.format(json, randomInt(maxSize))));
 
 /* GET users listing. */
 router.get('/', (req, res) => {
@@ -20,7 +22,7 @@ router.get('/', (req, res) => {
 		}
 
 		res.status(200);
-		res.json(mapping.get(randomInt(10000)));	
+		res.json(mapping.get(randomInt(maxSize)));	
 	});
 });
 
